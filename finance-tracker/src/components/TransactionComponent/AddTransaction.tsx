@@ -170,6 +170,7 @@ const AddTransaction = ({ allCategories }: Props) => {
 
                   setAmount(value === "" ? "" : parseInt(value));
                 }}
+                required
               />
             </div>
           </div>

@@ -134,6 +134,7 @@ const AddBudget = (props: Props) => {
                 id="amount"
                 className="col-span-4"
                 onChange={(e)=>setBudget(Number(e.target.value))}
+                required
               />
             </div>
             <div>
