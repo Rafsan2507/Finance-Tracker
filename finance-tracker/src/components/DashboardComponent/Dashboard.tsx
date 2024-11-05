@@ -69,7 +69,6 @@ type Props = {};
 const Dashboard = (props: Props) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const dispatch = useDispatch<AppDispatch>();
-  const [totalIncome, setTotalIncome] = useState(0);
   const [selectedMonth, setSelectedMonth] = useState<string>(
     format(new Date(), "MMMM")
   );
@@ -105,6 +104,7 @@ const Dashboard = (props: Props) => {
   const allTransactions = useSelector(
     (state: RootState) => state.transaction.transactions
   );
+  
   const allBudgets = useSelector((state: RootState) => state.budget.budgets);
   const filteredTransactions = allTransactions.filter(
     (transaction) =>
@@ -139,17 +139,14 @@ const Dashboard = (props: Props) => {
       fill: getColor(index),
     })
   );
-
-  useEffect(() => {
-    if (currentUser?.id) {
-      dispatch(
-        getTransactionByType({
-          userId: currentUser.id,
-          type: "Expense",
-        })
-      );
-    }
-  }, [currentUser?.id, dispatch]);
+  const totalIncome = allTransactions
+        .filter(
+          (transaction) =>
+            transaction.date &&
+            format(new Date(transaction.date), "MMMM") === selectedMonth &&
+            transaction.type === "Income"
+        )
+        .reduce((acc, transaction) => acc + (transaction.amount ?? 0), 0);
 
   const filteredBudgets = allBudgets.filter(
     (budget) =>
@@ -160,7 +157,7 @@ const Dashboard = (props: Props) => {
   const monthlyData = months.map((month, index) => {
     const monthlyTransactions = allTransactions.filter(
       (transaction) =>
-        transaction.date && getMonth(new Date(transaction.date)) === index
+        transaction.date && getMonth(new Date(transaction.date)) === index && transaction.type === "Expense"
     );
     const monthlyBudgets = allBudgets.filter(
       (budget) => budget.date && getMonth(new Date(budget.date)) === index
@@ -176,9 +173,9 @@ const Dashboard = (props: Props) => {
     );
 
     return {
-      month,
-      expenses: totalMonthlyExpenses,
+      month,   
       budget: totalMonthlyBudget,
+      expenses: totalMonthlyExpenses,
     };
   });
 
@@ -193,20 +190,12 @@ const Dashboard = (props: Props) => {
     0
   );
 
-  useEffect(() => {
-    if (allTransactions.length > 0) {
-      const income = allTransactions
-        .filter(
-          (transaction) =>
-            transaction.date &&
-            format(new Date(transaction.date), "MMMM") === selectedMonth &&
-            transaction.type === "Income"
-        )
-        .reduce((acc, transaction) => acc + (transaction.amount ?? 0), 0);
   
-      setTotalIncome(income);
-    }
-  }, [allTransactions, selectedMonth]);
+    
+      
+  
+        
+  
 
   const totalExpensesByCategory = React.useMemo(() => {
     return Object.values(expensesByCategory).reduce(
@@ -232,17 +221,51 @@ const Dashboard = (props: Props) => {
           </SelectContent>
         </Select>
       </div>
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-4 gap-4 px-8 mb-4">
+        <div className="bg-white p-4 flex flex-col gap-2">
+          <div className="text-md">
+            Originally Budgeted
+          </div>
+          <div className="text-2xl text-[#12c48b]">
+            {totalBudget} BDT
+          </div>
+        </div>
+        <div className="bg-white p-4 flex flex-col gap-2">
+          <div className="text-md">
+            Spent so far
+          </div>
+          <div className="text-2xl text-[#ea5681]">
+            {totalExpenses} BDT
+          </div>
+        </div>
+        <div className="bg-white p-4 flex flex-col gap-2">
+          <div className="text-md">
+            Money left
+          </div>
+          <div className="text-2xl text-[#12c48b]">
+            {totalBudget - totalExpenses} BDT
+          </div>
+        </div>
+        <div className="bg-white p-4 flex flex-col gap-2">
+          <div className="text-md">
+            Money left
+          </div>
+          <div className="text-2xl text-[#12c48b]">
+            {totalIncome} BDT
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-4 px-8">
       <div>
         <Card className="flex flex-col">
-          <CardHeader className="items-center pb-0">
+          <CardHeader >
             <CardTitle className="text-[#1ba0e2]">Expense Structure</CardTitle>
             <CardDescription>{selectedMonth}</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 pb-0">
             <ChartContainer
               config={chartConfig}
-              className="mx-auto aspect-square max-h-[250px]"
+              className="mx-auto aspect-square max-h-[300px]"
             >
               <PieChart>
                 <ChartTooltip
@@ -301,7 +324,7 @@ const Dashboard = (props: Props) => {
           <CardContent>
             <ChartContainer
               config={chartConfig2}
-              className="mx-auto aspect-square max-h-[400px]"
+              className="mx-auto aspect-square max-h-[450px] max-w-full w-[600px]"
             >
               <BarChart accessibilityLayer data={monthlyData}>
                 <CartesianGrid vertical={false} />
@@ -344,7 +367,7 @@ const Dashboard = (props: Props) => {
             
             <div className="text-lg">Total Expense : {totalExpenses} BDT</div>
             <div className="text-lg">Remaining Balance : {totalBudget - totalExpenses} BDT</div>
-            {/* <div>{totalIncome}</div> */}
+            <div>{totalIncome}</div>
             </div>
           </CardContent>
         </Card>

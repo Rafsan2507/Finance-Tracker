@@ -15,7 +15,7 @@
       "category": "Lunch",
       "description": "Visit India",
       "date": "2024-11-05T18:00:00.000Z",
-      "amount": 5000
+      "amount": 20000
     },
     {
       "id": "e7dd",
@@ -46,11 +46,10 @@
     },
     {
       "id": "e326",
-      "userId": "3931",
       "type": "Income",
       "category": "Education",
       "description": "lol",
-      "date": "2024-11-06T18:00:00.000Z",
+      "date": "2024-11-04T18:00:00.000Z",
       "amount": 5000
     }
   ],
