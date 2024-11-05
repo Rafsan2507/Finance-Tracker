@@ -1,0 +1,72 @@
+{
+  "users": [
+    {
+      "id": "3931",
+      "firstName": "Ignacio",
+      "lastName": "Nacho",
+      "email": "b4@gmail.com",
+      "password": "zxc"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "ac8f",
+      "type": "Expense",
+      "category": "Lunch",
+      "description": "Visit India",
+      "date": "2024-11-05T18:00:00.000Z",
+      "amount": 5000
+    },
+    {
+      "id": "e7dd",
+      "userId": "3931",
+      "type": "Income",
+      "category": "Vegan",
+      "description": "lol",
+      "date": "2024-12-03T18:00:00.000Z",
+      "amount": 10000
+    },
+    {
+      "id": "36f0",
+      "userId": "3931",
+      "type": "Expense",
+      "category": "Food & Beverages",
+      "description": "lol",
+      "date": "2024-12-04T18:00:00.000Z",
+      "amount": 10000
+    },
+    {
+      "id": "d479",
+      "userId": "3931",
+      "type": "Expense",
+      "category": "Health Care",
+      "description": "da",
+      "date": "2024-11-05T18:00:00.000Z",
+      "amount": 2000
+    },
+    {
+      "id": "e326",
+      "userId": "3931",
+      "type": "Income",
+      "category": "Education",
+      "description": "lol",
+      "date": "2024-11-06T18:00:00.000Z",
+      "amount": 5000
+    }
+  ],
+  "budgets": [
+    {
+      "id": "cee9",
+      "userId": "3931",
+      "category": "Lunch",
+      "budget": 10000,
+      "date": "2024-11-04T18:00:00.000Z"
+    },
+    {
+      "id": "a2af",
+      "category": "Vegan",
+      "budget": 10000,
+      "date": "2024-11-05T18:00:00.000Z"
+    }
+  ]
+}
