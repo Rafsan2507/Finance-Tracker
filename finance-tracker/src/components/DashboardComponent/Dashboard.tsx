@@ -67,11 +67,6 @@ const chartConfig2 = {
   },
 } satisfies ChartConfig;
 
-const chartConfig3 = {
-  percentage: {
-    label: "Expenses (%)",
-  },
-} satisfies ChartConfig;
 
 type Props = {};
 
@@ -206,18 +201,10 @@ const Dashboard = (props: Props) => {
     );
   }, [expensesByCategory]);
 
-  const expensePercentage = Math.min(
-    (totalExpenses / totalBudget) * 100,
-    100 // Cap at 100% for cases where expenses exceed the budget
-  ).toFixed(2);
+  const expensePercentage = totalExpenses === 0 && totalBudget === 0
+  ? 0 
+  : Math.min((totalExpenses / totalBudget) * 100, 100).toFixed(2);
 
-  // Bar chart data to display
-  const chartData2 = [
-    {
-      name: "Budget",
-      percentage: Number(expensePercentage), // Percentage of the budget spent
-    },
-  ];
   return (
     <div className="bg-[#eff0f2] pb-[5vh]">
       <div className=" flex justify-center py-6">
@@ -325,19 +312,19 @@ const Dashboard = (props: Props) => {
               <CardHeader>
                 <CardTitle className="font-medium">Budget Progress</CardTitle>
                 <CardDescription>
-                  Showing expenses as a percentage of total budget.
+                  Expenses as a percentage of total budget for {selectedMonth}.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 
-                <div className="relative w-full h-8 bg-white border border-gray-300 rounded-lg">
+                <div className="relative w-full h-8 bg-white border border-gray-300 rounded-sm">
                  
                   <div
-                    className="absolute top-0 left-0 h-full bg-[#12c48b] rounded-lg"
+                    className="absolute top-0 left-0 h-full bg-[#12c48b] rounded-sm"
                     style={{ width: `${expensePercentage}%` }}
                   />
                  
-                  <div className="absolute inset-0 flex justify-center items-center text-white font-semibold">
+                  <div className="absolute inset-0 flex justify-center items-center text-black">
                     {expensePercentage}%
                   </div>
                 </div>

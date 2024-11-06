@@ -21,12 +21,8 @@ import { Checkbox } from "../ui/checkbox";
 import { User } from "@/redux/AuthSlice/SignUp";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import {
-  
-  getTransactionByType,
-  
-} from "@/redux/TransactionSlice/TransactionSlice";
-import { format } from "date-fns";
+import { getTransactionByType } from "@/redux/TransactionSlice/TransactionSlice";
+import { format, isValid } from "date-fns";
 import { IoMdRemove } from "react-icons/io";
 import AddBudget from "./AddBudget";
 import UpdateBudget from "./UpdateBudget";
@@ -112,7 +108,6 @@ const BudgetTable = (props: Props) => {
     ]);
   }, [transactions]);
 
-
   const handleMonthSelection = (month: string) => {
     setSelectedMonth((prevSelectedMonths) =>
       prevSelectedMonths.includes(month)
@@ -140,7 +135,11 @@ const BudgetTable = (props: Props) => {
   });
 
   const filteredTransactions = transactions.filter((transaction) => {
-    const transactionMonth = format(new Date(transaction.date!), "MMMM");
+    const transactionDate = new Date(transaction.date!);
+    let transactionMonth = "";
+    if (isValid(transactionDate)) {
+      transactionMonth = format(transactionDate, "MMMM");
+    }
     const matchMonth =
       selectedMonth.length === 0 || selectedMonth.includes(transactionMonth);
     const matchCategory =
@@ -158,10 +157,8 @@ const BudgetTable = (props: Props) => {
         <div className="ml-16">
           <AddBudget />
         </div>
-        
       </div>
       <div className="flex gap-8">
-        
         <div className="bg-white flex flex-col gap-4 ml-16 p-4 w-[15vw]">
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
