@@ -108,9 +108,8 @@
     },
     {
       "id": "fac3",
-      "userId": "3931",
       "type": "Expense",
-      "category": "Food & Beverages",
+      "category": "Education",
       "description": "Wah",
       "date": "2024-11-13T18:00:00.000Z",
       "amount": 10000
@@ -134,15 +133,6 @@
       "amount": 5000
     },
     {
-      "id": "57f2",
-      "userId": "3931",
-      "type": "Expense",
-      "category": "Transportation",
-      "description": "vehicles",
-      "date": "2024-11-15T18:00:00.000Z",
-      "amount": 10000
-    },
-    {
       "id": "7fe2",
       "userId": "3931",
       "type": "Income",
@@ -150,6 +140,14 @@
       "description": "Salary",
       "date": "2024-11-14T18:00:00.000Z",
       "amount": 70000
+    },
+    {
+      "id": "a7b5",
+      "type": "Expense",
+      "category": "Life & Entertainment",
+      "description": "QW3E",
+      "date": "2024-11-08T18:00:00.000Z",
+      "amount": 10000
     }
   ],
   "budgets": [

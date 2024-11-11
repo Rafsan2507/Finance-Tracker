@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
 import {
   Table,
   TableBody,
@@ -27,6 +28,7 @@ import { IoMdRemove } from "react-icons/io";
 import AddBudget from "./AddBudget";
 import UpdateBudget from "./UpdateBudget";
 import { deleteBudget, getAllBudgets } from "@/redux/BudgetSlice/BudgetSlice";
+import { Input } from "../ui/input";
 type Props = {};
 
 const BudgetTable = (props: Props) => {
@@ -45,7 +47,7 @@ const BudgetTable = (props: Props) => {
     "December",
   ];
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-
+  const [searchByCategory, setSearchByCategory] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -131,7 +133,12 @@ const BudgetTable = (props: Props) => {
     const matchCategory =
       selectedCategory.length === 0 ||
       selectedCategory.includes(budget.category!);
-    return matchMonth && matchCategory;
+      const matchSearchTerm =
+      searchByCategory === "" ||
+      budget.category
+        ?.toLowerCase()
+        .includes(searchByCategory.toLowerCase());
+    return matchMonth && matchCategory && matchSearchTerm;
   });
 
   const filteredTransactions = transactions.filter((transaction) => {
@@ -151,11 +158,33 @@ const BudgetTable = (props: Props) => {
   const handleDeleteBudget = (id: string) => {
     dispatch(deleteBudget(id));
   };
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearchByCategory(value);
+      }, 1000),
+    []
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    debouncedSearch(value);
+  };
   return (
-    <div className=" bg-[#eff0f2] h-[100vh] overflow-auto">
-      <div className="flex align-items-center">
-        <div className="ml-16">
+    <div className=" bg-[#eff0f2] pb-8">
+      <div className="flex flex-col ml-16">
+        <div>
           <AddBudget />
+        </div>
+        <div className="pb-4">
+          <Input
+            type="search"
+            id="search"
+            placeholder="Search by category"
+            className="bg-white w-[15vw]"
+            onChange={handleSearchChange}
+          />
         </div>
       </div>
       <div className="flex gap-8">

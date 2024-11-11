@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
 import {
   Table,
   TableBody,
@@ -29,6 +30,8 @@ import { format, isValid } from "date-fns";
 import { IoMdRemove } from "react-icons/io";
 import UpdateTransaction from "./UpdateTransaction";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
 type Props = {};
 
 const TransactionTable = (props: Props) => {
@@ -37,6 +40,7 @@ const TransactionTable = (props: Props) => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string[]>([currentMonth]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [searchByCategory, setSearchByCategory] = useState<string>("");
   const dispatch = useDispatch<AppDispatch>();
   const [allCategories, setAllCategories] = useState<string[]>([
     "Food & Beverages",
@@ -113,7 +117,12 @@ const TransactionTable = (props: Props) => {
     const matchCategory =
       selectedCategory.length === 0 ||
       selectedCategory.includes(transaction.category!);
-    return matchType && matchMonth && matchCategory;
+    const matchSearchTerm =
+      searchByCategory === "" ||
+      transaction.category
+        ?.toLowerCase()
+        .includes(searchByCategory.toLowerCase());
+    return matchType && matchMonth && matchCategory && matchSearchTerm;
   });
 
   useEffect(() => {
@@ -138,39 +147,65 @@ const TransactionTable = (props: Props) => {
     setType(type);
   };
 
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearchByCategory(value);
+      }, 1000),
+    []
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    debouncedSearch(value);
+  };
+
   return (
-    <div className="bg-[#eff0f2] h-screen">
-      <div className="flex align-items-center">
+    <div className="bg-[#eff0f2] pb-8">
+      
         <div className="ml-16">
           <AddTransaction allCategories={allCategories} />
         </div>
-      </div>
-      <div className="flex mb-4 ml-[20vw]">
-        <div
-          className={`bg-white ${
-            type === "all" ? "bg-[#bbf2ff]" : "hover:bg-[#e4faff]"
-          } w-[25vw] py-2 cursor-pointer border flex justify-center`}
-          onClick={() => handleTypeChange("all")}
-        >
-          All
+      
+      <div className="flex gap-8 mx-16">
+        <div>
+          <Input
+            type="search"
+            id="search"
+            placeholder="Search by category"
+            className="bg-white w-[15vw]"
+            onChange={handleSearchChange}
+          />
         </div>
+        <div className="flex mb-4">
+          <div
+            className={`${
+              type === "all" ? "bg-[#bbf2ff]" : "bg-white hover:bg-[#e4faff]"
+            } w-[25vw] py-2 cursor-pointer border flex justify-center`}
+            onClick={() => handleTypeChange("all")}
+          >
+            All
+          </div>
 
-        <div
-          className={`bg-white ${
-            type === "Expense" ? "bg-[#bbf2ff]" : "hover:bg-[#e4faff]"
-          } w-[25vw] py-2 cursor-pointer border flex justify-center`}
-          onClick={() => handleTypeChange("Expense")}
-        >
-          Expense
-        </div>
+          <div
+            className={`${
+              type === "Expense"
+                ? "bg-[#bbf2ff]"
+                : "bg-white hover:bg-[#e4faff]"
+            } w-[25vw] py-2 cursor-pointer border flex justify-center`}
+            onClick={() => handleTypeChange("Expense")}
+          >
+            Expense
+          </div>
 
-        <div
-          className={`bg-white ${
-            type === "Income" ? "bg-[#bbf2ff]" : "hover:bg-[#e4faff]"
-          } w-[25vw] py-2 cursor-pointer border flex justify-center`}
-          onClick={() => handleTypeChange("Income")}
-        >
-          Income
+          <div
+            className={` ${
+              type === "Income" ? "bg-[#bbf2ff]" : "bg-white hover:bg-[#e4faff]"
+            } w-[25vw] py-2 cursor-pointer border flex justify-center`}
+            onClick={() => handleTypeChange("Income")}
+          >
+            Income
+          </div>
         </div>
       </div>
       <div className="flex gap-8">
@@ -190,27 +225,6 @@ const TransactionTable = (props: Props) => {
                 ))}
               </AccordionContent>
             </AccordionItem>
-            {/* <AccordionItem value="item-2">
-              <AccordionTrigger className="text-md">Type</AccordionTrigger>
-              <RadioGroup onValueChange={(value) => setType(value)}>
-                <AccordionContent>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex gap-2">
-                      <RadioGroupItem value="all" id="all" />
-                      <div>All</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <RadioGroupItem value="Income" id="Income" />
-                      <div>Income</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <RadioGroupItem value="Expense" id="Expense" />
-                      <div>Expense</div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </RadioGroup>
-            </AccordionItem> */}
             <AccordionItem value="item-2">
               <AccordionTrigger className="text-md">Category</AccordionTrigger>
               <AccordionContent>
